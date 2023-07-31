@@ -6,22 +6,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import br.com.softexpert.desafio.service.BillService;
+import br.com.softexpert.desafio.service.MercadoPagoService;
 import br.com.softexpert.desafio.models.Bill;
 import br.com.softexpert.desafio.models.BillPerson;
 import br.com.softexpert.desafio.models.CompanyPaymentEnum;
 import br.com.softexpert.desafio.models.Order;
+import br.com.softexpert.desafio.models.dto.PaymentResponseDTO;
 
 @Service("billService")
 public class BillServiceImpl implements BillService {
 
+	@Autowired
+	MercadoPagoService mercadoPagoService;
+
 	@Override
-	public void payment(Bill bill, String company) {
+	public List<PaymentResponseDTO> payment(Bill bill, String company) {
 		Map<Integer, BillPerson> totalPerPerson = this.getTotalPerPerson(bill);
 		switch (CompanyPaymentEnum.fromString(company)) {
 			case MERCADO_PAGO:
 			default: 
+				return mercadoPagoService.payment(totalPerPerson);
 		}
 	}
 
