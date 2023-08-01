@@ -12,7 +12,7 @@ public class BillCreator {
 	
 	public static Bill createBill() {
 		List<Order> orders = new ArrayList<Order>();
-		Person person = new Person(0, "Yuri", "yuri.b.1114@gmail.com");
+		Person person = new Person(0, "Yuri", "yuri.b.1114@gmail.com", true);
 		Order order1 = new Order(0, new BigDecimal(40), null);
 		Order order2 = new Order(0, new BigDecimal(2), null);
 		Order order3 = new Order(0, new BigDecimal(40), person);

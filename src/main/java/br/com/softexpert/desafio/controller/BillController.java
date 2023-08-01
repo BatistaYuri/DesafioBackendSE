@@ -2,9 +2,11 @@ package br.com.softexpert.desafio.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,8 +24,8 @@ public class BillController {
 	@Autowired
 	BillService billService;
 
-	@GetMapping
-	public List<PaymentResponseDTO> payment(@RequestParam() String companyPayment, @RequestBody(required = true) Bill bill) {
+	@PostMapping
+	public List<PaymentResponseDTO> payment(@RequestParam String companyPayment, @RequestBody(required = true) @Valid Bill bill) {
 		return billService.payment(bill, companyPayment);
 	}
 

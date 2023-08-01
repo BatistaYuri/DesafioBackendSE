@@ -26,34 +26,31 @@ public class BillServiceImpl implements BillService {
 	public List<PaymentResponseDTO> payment(Bill bill, String company) {
 		Map<Integer, BillPerson> totalPerPerson = this.getTotalPerPerson(bill);
 		switch (CompanyPaymentEnum.fromString(company)) {
-			case MERCADO_PAGO:
-			default: 
-				return mercadoPagoService.payment(totalPerPerson);
+		case MERCADO_PAGO:
+		default:
+			return mercadoPagoService.payment(totalPerPerson);
 		}
 	}
 
 	private Map<Integer, BillPerson> getTotalPerPerson(Bill bill) {
 		BigDecimal totalOrders = bill.getOrders().stream().reduce(BigDecimal.ZERO,
 				(subtotal, order) -> subtotal.add(order.getPrice()), BigDecimal::add);
-		
-		List<Order> payerOrders = bill.getOrders().stream().filter(order -> order.getPerson() != null).toList();
-		
-		Map<Integer, BigDecimal> totalOrdersPersonId = payerOrders.stream()
-				.collect(Collectors.groupingBy((order) -> order.getPerson().getId(),
-						Collectors.reducing(BigDecimal.ZERO, Order::getPrice, BigDecimal::add)));
-		
-		return payerOrders.stream()
-				.collect(Collectors.toMap((order) -> order.getPerson().getId(), (order) -> new BillPerson(order.getPerson(), 
-						this.getTotalPerson(totalOrders, totalOrdersPersonId.get(order.getPerson().getId()), bill.getAdditions(), bill.getDiscounts()))));
-	}
 
+		List<Order> payerOrders = bill.getOrders().stream().filter(order -> !order.getPerson().getPayer()).toList();
+
+		return payerOrders.stream().collect(Collectors.groupingBy((order) -> order.getPerson().getId(),
+				Collectors.collectingAndThen(Collectors.reducing(new Order(), Order::merge), (order) -> {
+					return new BillPerson(order.getPerson(), this.getTotalPerson(totalOrders, order.getPrice(),
+							bill.getAdditions(), bill.getDiscounts()));
+				})));
+	}
 
 	private BigDecimal getTotalPerson(BigDecimal total, BigDecimal totalPerson, List<BigDecimal> additions,
 			List<BigDecimal> discounts) {
 		BigDecimal additionPerPerson = totalPerson.multiply(additions.stream().reduce(BigDecimal.ZERO, BigDecimal::add))
-				.divide(total);
+				.divide(total, 2, RoundingMode.HALF_UP);
 		BigDecimal discountPerPerson = totalPerson.multiply(discounts.stream().reduce(BigDecimal.ZERO, BigDecimal::add))
-				.divide(total);
+				.divide(total, 2, RoundingMode.HALF_UP);
 		return totalPerson.add(additionPerPerson).subtract(discountPerPerson).setScale(2, RoundingMode.HALF_EVEN);
 	}
 }

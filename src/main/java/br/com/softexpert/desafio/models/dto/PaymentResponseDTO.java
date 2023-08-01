@@ -2,21 +2,23 @@ package br.com.softexpert.desafio.models.dto;
 
 import java.math.BigDecimal;
 
+import br.com.softexpert.desafio.models.Person;
+
 public class PaymentResponseDTO {
-	private String namePerson;
+	private Person person;
 	private BigDecimal price;
 	private String url;
-	public PaymentResponseDTO(String namePerson, BigDecimal price, String url) {
+	public PaymentResponseDTO(Person person, BigDecimal price, String url) {
 		super();
-		this.namePerson = namePerson;
+		this.person = person;
 		this.price = price;
 		this.url = url;
 	}
-	public String getNamePerson() {
-		return namePerson;
+	public Person getPerson() {
+		return person;
 	}
-	public void setNamePerson(String namePerson) {
-		this.namePerson = namePerson;
+	public void setPerson(Person person) {
+		this.person = person;
 	}
 	public BigDecimal getPrice() {
 		return price;

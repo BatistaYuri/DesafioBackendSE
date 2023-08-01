@@ -39,7 +39,7 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
 			try {
 				PaymentCreateRequest createRequest = PaymentCreateRequest.builder().description("Divisão do lanche")
 						.transactionAmount(value.getPrice()).paymentMethodId("pix")
-						.payer(PaymentPayerRequest.builder().email(value.getPerson().getEmail()).firstName(value.getPerson().getNome())
+						.payer(PaymentPayerRequest.builder().email(value.getPerson().getEmail()).firstName(value.getPerson().getName())
 								.entityType("individual").type("customer").build())
 						.build();
 
@@ -51,7 +51,7 @@ public class MercadoPagoServiceImpl implements MercadoPagoService {
 						mapper.readTree(ow.writeValueAsString(payment)).get("response").get("content").asText());
 				String ticket_url = content.get("point_of_interaction").get("transaction_data").get("ticket_url")
 						.asText().toString();
-				responses.add(new PaymentResponseDTO(value.getPerson().getNome(), payment.getTransactionAmount(), ticket_url));
+				responses.add(new PaymentResponseDTO(value.getPerson(), payment.getTransactionAmount(), ticket_url));
 			} catch (MPApiException apiException) {
 				System.out.println(apiException.getApiResponse().getContent());
 				throw new RuntimeException(apiException.getApiResponse().getContent());
