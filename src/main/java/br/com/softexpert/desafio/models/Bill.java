@@ -3,8 +3,14 @@ package br.com.softexpert.desafio.models;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 public class Bill {
+	@NotNull
 	private Integer id;
+	@NotNull
+	@NotEmpty
 	private List<Order> orders;
 	private List<BigDecimal> additions;
 	private List<BigDecimal> discounts;
