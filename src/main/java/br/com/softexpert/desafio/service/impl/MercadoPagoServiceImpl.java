@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 @Service("mercadoPagoService")
 public class MercadoPagoServiceImpl implements MercadoPagoService {
-	@Value("${mercado_pago_access_token}")
+	@Value("${mercado_pago_access_token_test}")
 	private String mercadoPagoAccessToken;
 
 	@Override
