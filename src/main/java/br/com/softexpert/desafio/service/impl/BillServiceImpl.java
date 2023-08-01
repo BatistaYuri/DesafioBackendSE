@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import br.com.softexpert.desafio.service.BillService;
 import br.com.softexpert.desafio.service.MercadoPagoService;
+import br.com.softexpert.desafio.validator.util.ValidatorUtil;
 import br.com.softexpert.desafio.models.Bill;
 import br.com.softexpert.desafio.models.BillPerson;
 import br.com.softexpert.desafio.models.CompanyPaymentEnum;
@@ -21,9 +22,13 @@ public class BillServiceImpl implements BillService {
 
 	@Autowired
 	MercadoPagoService mercadoPagoService;
+	
+	@Autowired
+	ValidatorUtil validatorUtil;
 
 	@Override
 	public List<PaymentResponseDTO> payment(Bill bill, String company) {
+		this.validatorUtil.validadeEmails(bill.getOrders().stream().map((order) -> order.getPerson().getEmail()).collect(Collectors.toList()));
 		Map<Integer, BillPerson> totalPerPerson = this.getTotalPerPerson(bill);
 		switch (CompanyPaymentEnum.fromString(company)) {
 		case MERCADO_PAGO:
